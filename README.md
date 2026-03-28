@@ -15,11 +15,10 @@ A Chrome extension that simulates human-like typing into Google Docs at adjustab
 ## Installation
 
 1. Clone or download this repository.
-2. Add your icon files to `zacktype/icons/` (see `zacktype/icons/README.md`).
-3. Open Chrome and navigate to `chrome://extensions`.
-4. Enable **Developer mode** (toggle in the top-right corner).
-5. Click **Load unpacked** and select the `zacktype/` directory.
-6. The ZackType extension icon will appear in your Chrome toolbar.
+2. Open Chrome and navigate to `chrome://extensions`.
+3. Enable **Developer mode** (toggle in the top-right corner).
+4. Click **Load unpacked** and select the `zacktype/` directory.
+5. The ZackType extension icon will appear in your Chrome toolbar.
 
 ## Usage
 
@@ -40,13 +39,7 @@ zacktype/
 ├── manifest.json    # Manifest V3 Chrome extension config
 ├── background.js    # Service worker — handles icon click
 ├── content.js       # Floating UI panel + typing engine
-├── popup.html       # Minimal popup for non-Google Docs tabs
-└── icons/
-    ├── README.md    # Instructions for creating icon files
-    ├── icon16.png   # (add manually)
-    ├── icon32.png   # (add manually)
-    ├── icon48.png   # (add manually)
-    └── icon128.png  # (add manually)
+└── popup.html       # Minimal popup for non-Google Docs tabs
 ```
 
 ## Technical Details
