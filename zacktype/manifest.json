@@ -1,0 +1,19 @@
+{
+  "manifest_version": 3,
+  "name": "ZackType",
+  "version": "1.0.0",
+  "description": "Human typing simulator for Google Docs — type text at adjustable speeds up to 300 WPM.",
+  "permissions": ["activeTab", "scripting"],
+  "action": {
+    "default_popup": "popup.html"
+  },
+  "background": {
+    "service_worker": "background.js"
+  },
+  "content_scripts": [
+    {
+      "matches": ["https://docs.google.com/document/*"],
+      "js": ["content.js"]
+    }
+  ]
+}
