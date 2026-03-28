@@ -1,0 +1,487 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Natural Typist Settings</title>
+    <style>
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+
+      body {
+        font-family: "Inter", -apple-system, BlinkMacSystemFont, sans-serif;
+        background: #1e1e1e;
+        color: #f1f1f1;
+        padding: 20px;
+        min-width: 400px;
+      }
+
+      .settings-container {
+        max-width: 500px;
+        margin: 0 auto;
+      }
+
+      .header {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        margin-bottom: 24px;
+        padding-bottom: 16px;
+        border-bottom: 1px solid #444;
+      }
+
+      .header h1 {
+        font-size: 24px;
+        font-weight: 600;
+        color: #f1f1f1;
+      }
+
+      .version {
+        font-size: 12px;
+        color: #aaa;
+        background: #444;
+        padding: 2px 8px;
+        border-radius: 12px;
+      }
+
+      .settings-section {
+        background: #252525;
+        border-radius: 12px;
+        padding: 20px;
+        margin-bottom: 20px;
+        border: 1px solid #444;
+      }
+
+      .settings-section h2 {
+        font-size: 16px;
+        font-weight: 600;
+        color: #f1f1f1;
+        margin-bottom: 16px;
+      }
+
+      .setting-item {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 16px;
+        padding-bottom: 16px;
+        border-bottom: 1px solid #444;
+      }
+
+      .setting-item:last-child {
+        margin-bottom: 0;
+        padding-bottom: 0;
+        border-bottom: none;
+      }
+
+      .setting-label {
+        font-size: 14px;
+        color: #f1f1f1;
+      }
+
+      .setting-description {
+        font-size: 12px;
+        color: #aaa;
+        margin-top: 4px;
+      }
+
+      .toggle-switch {
+        position: relative;
+        display: inline-block;
+        width: 44px;
+        height: 24px;
+      }
+
+      .toggle-switch input {
+        opacity: 0;
+        width: 0;
+        height: 0;
+      }
+
+      .toggle-slider {
+        position: absolute;
+        cursor: pointer;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background-color: #444;
+        transition: 0.4s;
+        border-radius: 24px;
+      }
+
+      .toggle-slider:before {
+        position: absolute;
+        content: "";
+        height: 18px;
+        width: 18px;
+        left: 3px;
+        bottom: 3px;
+        background-color: white;
+        transition: 0.4s;
+        border-radius: 50%;
+      }
+
+      input:checked + .toggle-slider {
+        background-color: #3b82f6;
+      }
+
+      input:checked + .toggle-slider:before {
+        transform: translateX(20px);
+      }
+
+      .break-controls {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        margin-top: 12px;
+      }
+
+      .break-input {
+        width: 60px;
+        padding: 8px;
+        border: 1px solid #444;
+        border-radius: 6px;
+        background: #1e1e1e;
+        color: #f1f1f1;
+        text-align: center;
+        font-size: 14px;
+        font-family: inherit;
+      }
+
+      .break-input:focus {
+        outline: none;
+        border-color: #3b82f6;
+        box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.3);
+      }
+
+      .break-separator {
+        color: #aaa;
+      }
+
+      .break-label {
+        font-size: 12px;
+        color: #aaa;
+      }
+
+      .discord-section {
+        text-align: center;
+        margin: 24px 0;
+      }
+
+      .discord-btn {
+        background: linear-gradient(135deg, #5865f2, #4752c4);
+        color: white;
+        border: none;
+        padding: 12px 24px;
+        border-radius: 8px;
+        font-size: 14px;
+        font-weight: 600;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        box-shadow: 0 4px 15px rgba(88, 101, 242, 0.4);
+        position: relative;
+        overflow: hidden;
+      }
+
+      .discord-btn:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 6px 20px rgba(88, 101, 242, 0.6);
+      }
+
+      .discord-btn:active {
+        transform: translateY(0);
+      }
+
+      .discord-btn::before {
+        content: "";
+        position: absolute;
+        top: 0;
+        left: -100%;
+        width: 100%;
+        height: 100%;
+        background: linear-gradient(
+          90deg,
+          transparent,
+          rgba(255, 255, 255, 0.2),
+          transparent
+        );
+        transition: left 0.5s;
+      }
+
+      .discord-btn:hover::before {
+        left: 100%;
+      }
+
+      .discord-icon {
+        width: 18px;
+        height: 18px;
+      }
+
+      .footer {
+        text-align: center;
+        margin-top: 24px;
+        padding-top: 16px;
+        border-top: 1px solid #444;
+        color: #777;
+        font-size: 12px;
+      }
+
+      .light-mode {
+        background: #ffffff;
+        color: #333333;
+      }
+
+      .light-mode .header h1 {
+        color: #333333;
+      }
+
+      .light-mode .settings-section {
+        background: #f9f9f9;
+        border-color: #e0e0e0;
+      }
+
+      .light-mode .settings-section h2 {
+        color: #333333;
+      }
+
+      .light-mode .setting-label {
+        color: #333333;
+      }
+
+      .light-mode .setting-description {
+        color: #666666;
+      }
+
+      .light-mode .toggle-slider {
+        background-color: #d0d0d0;
+      }
+
+      .light-mode .break-input {
+        background: #ffffff;
+        border-color: #e0e0e0;
+        color: #333333;
+      }
+
+      .light-mode .footer {
+        color: #666666;
+        border-color: #e0e0e0;
+      }
+
+      .frequency-slider {
+        width: 120px;
+        -webkit-appearance: none;
+        height: 4px;
+        background: #444;
+        border-radius: 3px;
+        outline: none;
+      }
+
+      .light-mode .frequency-slider {
+        background: #e0e0e0;
+      }
+
+      .frequency-slider::-webkit-slider-thumb {
+        -webkit-appearance: none;
+        width: 16px;
+        height: 16px;
+        border-radius: 50%;
+        background: #3b82f6;
+        cursor: pointer;
+        transition: all 0.2s;
+        border: 2px solid #252525;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+      }
+
+      .light-mode .frequency-slider::-webkit-slider-thumb {
+        border: 2px solid #f9f9f9;
+      }
+
+      .frequency-slider::-webkit-slider-thumb:hover {
+        transform: scale(1.1);
+        background: #2563eb;
+      }
+
+      .frequency-value {
+        font-size: 12px;
+        color: #aaa;
+        min-width: 30px;
+        text-align: center;
+        font-weight: 600;
+      }
+
+      .light-mode .frequency-value {
+        color: #666666;
+      }
+
+      .frequency-labels {
+        display: flex;
+        justify-content: space-between;
+        font-size: 10px;
+        color: #777;
+        margin-top: 8px;
+        padding: 0 5px;
+      }
+
+      .light-mode .frequency-labels {
+        color: #999999;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="settings-container">
+      <div class="header">
+        <h1>Natural Typist Settings</h1>
+        <span class="version">v1.5.0</span>
+      </div>
+
+      <div class="settings-section">
+        <h2>General Settings</h2>
+
+        <div class="setting-item">
+          <div>
+            <div class="setting-label">Remember Text</div>
+            <div class="setting-description">
+              Save your text between sessions
+            </div>
+          </div>
+          <label class="toggle-switch">
+            <input type="checkbox" id="rememberTextToggle" />
+            <span class="toggle-slider"></span>
+          </label>
+        </div>
+
+        <div class="setting-item">
+          <div>
+            <div class="setting-label">Dark Mode</div>
+            <div class="setting-description">Toggle dark/light theme</div>
+          </div>
+          <label class="toggle-switch">
+            <input type="checkbox" id="darkModeToggle" />
+            <span class="toggle-slider"></span>
+          </label>
+        </div>
+      </div>
+
+        <div class="settings-section">
+          <h2>Break Settings</h2>
+
+          <div class="setting-item">
+            <div>
+              <div class="setting-label">Enable Breaks</div>
+              <div class="setting-description">
+                Take natural typing breaks during long sessions
+              </div>
+            </div>
+            <label class="toggle-switch">
+              <input type="checkbox" id="enableBreaksToggle" />
+              <span class="toggle-slider"></span>
+            </label>
+          </div>
+
+          <div class="setting-item frequency-tooltip">
+            <div>
+              <div class="setting-label">Break Frequency</div>
+              <div class="setting-description">
+                How often to take breaks during typing
+              </div>
+            </div>
+            <div
+              style="
+                display: flex;
+                flex-direction: column;
+                gap: 8px;
+                width: 160px;
+              "
+            >
+              <div style="display: flex; align-items: center; gap: 12px">
+                <input
+                  type="range"
+                  id="breakFrequency"
+                  class="frequency-slider"
+                  min="1"
+                  max="10"
+                  value="5"
+                />
+                <span id="breakFrequencyValue" class="frequency-value">5</span>
+              </div>
+              <div class="frequency-labels">
+                <span>More</span>
+                <span>Less</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="break-controls">
+            <span class="setting-label">Break Duration:</span>
+            <input
+              type="number"
+              id="minBreakTime"
+              class="break-input"
+              min="1"
+              max="5"
+              value="1"
+            />
+            <span class="break-separator">-</span>
+            <input
+              type="number"
+              id="maxBreakTime"
+              class="break-input"
+              min="1"
+              max="5"
+              value="5"
+            />
+            <span class="break-label">minutes</span>
+          </div>
+        </div>
+
+        <div class="settings-section">
+  <h2>AI Detection</h2>
+
+  <div class="setting-item">
+    <div>
+      <div class="setting-label">AI Text Detection</div>
+      <div class="setting-description">
+        Show prompt to check text for AI content
+      </div>
+    </div>
+    <label class="toggle-switch">
+      <input type="checkbox" id="aiDetectionToggle" />
+      <span class="toggle-slider"></span>
+    </label>
+  </div>
+</div>
+      </div>
+
+      <div class="discord-section">
+        <button class="discord-btn" id="discordBtn">
+          <svg
+            class="discord-icon"
+            xmlns="http://www.w3.org/2000/svg"
+            width="16"
+            height="16"
+            fill="currentColor"
+            viewBox="0 0 16 16"
+          >
+            <path
+              d="M13.545 2.907a13.2 13.2 0 0 0-3.257-1.011.05.05 0 0 0-.052.025c-.141.25-.297.577-.406.833a12.2 12.2 0 0 0-3.658 0 8 8 0 0 0-.412-.833.05.05 0 0 0-.052-.025c-1.125.194-2.22.534-3.257 1.011a.04.04 0 0 0-.021.018C.356 6.024-.213 9.047.066 12.032q.003.022.021.037a13.3 13.3 0 0 0 3.995 2.02.05.05 0 0 0 .056-.019q.463-.63.818-1.329a.05.05 0 0 0-.01-.059l-.018-.011a9 9 0 0 1-1.248-.595.05.05 0 0 1-.02-.066l.015-.019q.127-.095.248-.195a.05.05 0 0 1 .051-.007c2.619 1.196 5.454 1.196 8.041 0a.05.05 0 0 1 .053.007q.121.1.248.195a.05.05 0 0 1-.004.085 8 8 0 0 1-1.249.594.05.05 0 0 0-.03.03.05.05 0 0 0 .003.041c.24.465.515.909.817 1.329a.05.05 0 0 0 .056.019 13.2 13.2 0 0 0 4.001-2.02.05.05 0 0 0 .021-.037c.334-3.451-.559-6.449-2.366-9.106a.03.03 0 0 0-.02-.019m-8.198 7.307c-.789 0-1.438-.724-1.438-1.612s.637-1.613 1.438-1.613c.807 0 1.45.73 1.438 1.613 0 .888-.637 1.612-1.438 1.612m5.316 0c-.788 0-1.438-.724-1.438-1.612s.637-1.613 1.438-1.613c.807 0 1.451.73 1.438 1.613 0 .888-.631 1.612-1.438 1.612"
+            />
+          </svg>
+          Join Discord Server
+        </button>
+      </div>
+
+      <div class="footer">
+        <div class="creator-info">Created by ialwaysw1n</div>
+      </div>
+    </div>
+
+    <script src="settings.js"></script>
+  </body>
+</html>

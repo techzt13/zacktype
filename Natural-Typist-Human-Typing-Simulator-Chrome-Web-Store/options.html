@@ -1,0 +1,220 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Feedback - Natural Typist</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            background: #fafafa;
+            color: #333;
+            line-height: 1.6;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            font-weight: 400;
+        }
+
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 40px 24px;
+            flex: 1;
+        }
+
+        header {
+            text-align: center;
+            margin-bottom: 48px;
+        }
+
+        .logo {
+            font-size: 2.8rem;
+            font-weight: 300;
+            margin-bottom: 12px;
+            letter-spacing: -0.5px;
+            color: #1a1a1a;
+        }
+
+        .tagline {
+            font-size: 1.1rem;
+            color: #666;
+            font-weight: 400;
+            max-width: 500px;
+            margin: 0 auto;
+        }
+
+        .content {
+            display: flex;
+            flex-direction: column;
+            gap: 32px;
+        }
+
+        .intro {
+            text-align: center;
+            padding: 0 20px;
+        }
+
+        .intro h2 {
+            font-size: 1.8rem;
+            font-weight: 500;
+            margin-bottom: 16px;
+            color: #1a1a1a;
+        }
+
+        .intro p {
+            color: #666;
+            font-size: 1.05rem;
+            max-width: 600px;
+            margin: 0 auto;
+        }
+
+        .form-section {
+            background: white;
+            border-radius: 16px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.04);
+            border: 1px solid #f0f0f0;
+            overflow: hidden;
+        }
+
+        .form-container {
+            padding: 32px;
+        }
+
+        .form-frame {
+            width: 100%;
+            height: 650px;
+            border: 1px solid #e8e8e8;
+            border-radius: 12px;
+            background: white;
+        }
+
+        .actions {
+            display: flex;
+            justify-content: center;
+            margin-top: 32px;
+        }
+
+        .back-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 12px 24px;
+            background: #3b82f6;
+            color: white;
+            text-decoration: none;
+            border-radius: 10px;
+            font-weight: 500;
+            transition: all 0.2s ease;
+            font-size: 0.95rem;
+            box-shadow: 0 2px 8px rgba(59, 130, 246, 0.2);
+        }
+
+        .back-btn:hover {
+            background: #2563eb;
+            transform: translateY(-1px);
+            box-shadow: 0 4px 12px rgba(59, 130, 246, 0.3);
+        }
+
+        footer {
+            text-align: center;
+            padding: 32px 24px;
+            margin-top: 60px;
+            color: #888;
+            font-size: 0.9rem;
+            border-top: 1px solid #f0f0f0;
+        }
+
+        .creator {
+            font-weight: 500;
+            color: #3b82f6;
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                padding: 32px 20px;
+            }
+
+            .logo {
+                font-size: 2.4rem;
+            }
+
+            .form-container {
+                padding: 24px;
+            }
+
+            .form-frame {
+                height: 550px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .container {
+                padding: 24px 16px;
+            }
+
+            .logo {
+                font-size: 2rem;
+            }
+
+            .intro h2 {
+                font-size: 1.6rem;
+            }
+
+            .form-container {
+                padding: 20px;
+            }
+
+            .form-frame {
+                height: 500px;
+            }
+            
+            .back-btn {
+                width: 100%;
+                justify-content: center;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <div class="logo">Natural Typist</div>
+            <p class="tagline">Share your feedback to help us improve</p>
+        </header>
+
+        <div class="content">
+            <section class="intro">
+                <h2>Your Experience Matters</h2>
+                <p>We're constantly working to make Natural Typist better. Your feedback helps us understand what's working well and where we can improve.</p>
+            </section>
+
+            <section class="form-section">
+                <div class="form-container">
+                    <iframe 
+                        src="https://docs.google.com/forms/d/e/1FAIpQLSfLdm1bGpH3O3WCQZx9TTWpszzZIp-CNgpn1DbY-l_u_ucyqA/viewform?embedded=true" 
+                        class="form-frame" 
+                        frameborder="0" 
+                        marginheight="0" 
+                        marginwidth="0"
+                        title="Natural Typist Feedback Form"
+                    >Loading…</iframe>
+                </div>
+            </section>
+        </div>
+    </div>
+
+    <footer>
+        <p>Created by <span class="creator">ialwaysw1n</span></p>
+    </footer>
+</body>
+</html>
