@@ -18,6 +18,32 @@
   let pauseTimeout = null;
   let targetElement = null;
 
+  // Capture the currently focused element at injection time (before the UI steals focus)
+  (function captureInitialFocus() {
+    const el = document.activeElement;
+    if (!el) return;
+    const tag = (el.tagName || "").toLowerCase();
+    if (tag === "input" || tag === "textarea" || el.isContentEditable) {
+      targetElement = el;
+    }
+    // Also check iframes
+    try {
+      const frames = document.querySelectorAll("iframe");
+      for (const f of frames) {
+        if (f.contentDocument) {
+          const fel = f.contentDocument.activeElement;
+          if (fel && fel !== f.contentDocument.body) {
+            const ftag = (fel.tagName || "").toLowerCase();
+            if (ftag === "input" || ftag === "textarea" || fel.isContentEditable) {
+              targetElement = fel;
+              break;
+            }
+          }
+        }
+      }
+    } catch (_) {}
+  })();
+
   // Track the last focused text element outside the ZackType UI
   document.addEventListener("focusin", (e) => {
     const ui = document.getElementById("zackTypeUI");
@@ -293,30 +319,35 @@
     let typingTarget = null;
     let isGoogleDocs = false;
 
-    // Check if we're on Google Docs
+    // Check if we're on Google Docs — if the iframe exists, use it directly
     const iframe = document.querySelector(".docs-texteventtarget-iframe");
     if (iframe && iframe.contentDocument) {
       const iframeActive = iframe.contentDocument.activeElement;
-      if (iframeActive && iframeActive !== iframe.contentDocument.body) {
-        typingTarget = iframeActive;
-        isGoogleDocs = true;
-      }
+      typingTarget = (iframeActive && iframeActive !== iframe.contentDocument.body)
+        ? iframeActive
+        : iframe.contentDocument.body;
+      isGoogleDocs = true;
     }
 
-    // For non-Google Docs, use the tracked focus target
+    // For non-Google Docs, use the tracked focus target (with fallbacks)
     if (!isGoogleDocs) {
-      if (!targetElement || !document.contains(targetElement)) {
+      if (targetElement && document.contains(targetElement)) {
+        typingTarget = targetElement;
+      } else {
+        // Fallback: try the currently active element
+        const active = document.activeElement;
+        if (active) {
+          const tag = (active.tagName || "").toLowerCase();
+          if (tag === "input" || tag === "textarea" || active.isContentEditable) {
+            typingTarget = active;
+          }
+        }
+      }
+      if (!typingTarget) {
         showToast("Please click on the text field you want to type into, then click Start.");
         resetUI();
         return;
       }
-      typingTarget = targetElement;
-    }
-
-    if (!typingTarget) {
-      showToast("Please click inside the document first, then click Start.");
-      resetUI();
-      return;
     }
 
     typingTarget.focus();
