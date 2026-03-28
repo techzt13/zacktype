@@ -322,10 +322,10 @@
     // Check if we're on Google Docs — if the iframe exists, use it directly
     const iframe = document.querySelector(".docs-texteventtarget-iframe");
     if (iframe && iframe.contentDocument) {
+      // Google Docs uses the iframe's activeElement for keyboard events
+      // Even if it's the body element, that's the correct target for typing
       const iframeActive = iframe.contentDocument.activeElement;
-      typingTarget = (iframeActive && iframeActive !== iframe.contentDocument.body)
-        ? iframeActive
-        : iframe.contentDocument.body;
+      typingTarget = iframeActive || iframe.contentDocument.body;
       isGoogleDocs = true;
     }
 
