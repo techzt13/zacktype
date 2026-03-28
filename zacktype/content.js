@@ -16,6 +16,18 @@
   let typingIndex = 0;
   let currentText = "";
   let pauseTimeout = null;
+  let targetElement = null;
+
+  // Track the last focused text element outside the ZackType UI
+  document.addEventListener("focusin", (e) => {
+    const ui = document.getElementById("zackTypeUI");
+    if (ui && ui.contains(e.target)) return;
+    const el = e.target;
+    const tag = (el.tagName || "").toLowerCase();
+    if (tag === "input" || tag === "textarea" || el.isContentEditable) {
+      targetElement = el;
+    }
+  }, true);
 
   // ── Helpers ────────────────────────────────────────────────────────────────
 
@@ -244,26 +256,70 @@
     return new Promise((resolve) => setTimeout(resolve, ms));
   }
 
+  // ── Insert a single character into a non-Google-Docs element ────────────────
+
+  async function insertChar(element, char) {
+    if (char === "\n") {
+      const tag = (element.tagName || "").toLowerCase();
+      if (tag === "textarea") {
+        document.execCommand("insertText", false, "\n");
+      } else if (element.isContentEditable) {
+        if (!document.execCommand("insertParagraph", false, null)) {
+          document.execCommand("insertText", false, "\n");
+        }
+      }
+      return;
+    }
+
+    const inserted = document.execCommand("insertText", false, char);
+    if (!inserted) {
+      // Fallback: directly manipulate value for input/textarea
+      const tag = (element.tagName || "").toLowerCase();
+      if (tag === "input" || tag === "textarea") {
+        const start = element.selectionStart ?? element.value.length;
+        const end = element.selectionEnd ?? element.value.length;
+        element.value = element.value.slice(0, start) + char + element.value.slice(end);
+        element.selectionStart = element.selectionEnd = start + char.length;
+        element.dispatchEvent(new Event("input", { bubbles: true }));
+      } else {
+        await dispatchChar(element, char);
+      }
+    }
+  }
+
   // ── Main typing loop ────────────────────────────────────────────────────────
 
   async function runTyping(text, wpm, startIndex) {
+    let typingTarget = null;
+    let isGoogleDocs = false;
+
+    // Check if we're on Google Docs
     const iframe = document.querySelector(".docs-texteventtarget-iframe");
-    if (!iframe) {
-      console.error("ZackType: Google Docs editor not found");
-      showToast("Could not find Google Docs editor. Click inside the document first.");
+    if (iframe && iframe.contentDocument) {
+      const iframeActive = iframe.contentDocument.activeElement;
+      if (iframeActive && iframeActive !== iframe.contentDocument.body) {
+        typingTarget = iframeActive;
+        isGoogleDocs = true;
+      }
+    }
+
+    // For non-Google Docs, use the tracked focus target
+    if (!isGoogleDocs) {
+      if (!targetElement || !document.contains(targetElement)) {
+        showToast("Please click on the text field you want to type into, then click Start.");
+        resetUI();
+        return;
+      }
+      typingTarget = targetElement;
+    }
+
+    if (!typingTarget) {
+      showToast("Please click inside the document first, then click Start.");
       resetUI();
       return;
     }
 
-    const target = iframe.contentDocument.activeElement;
-    if (!target) {
-      console.error("ZackType: Could not focus Google Docs editor");
-      showToast("Please click inside the Google Docs document first.");
-      resetUI();
-      return;
-    }
-
-    target.focus();
+    typingTarget.focus();
     typingIndex = startIndex;
     currentText = text;
     isTyping = true;
@@ -282,7 +338,11 @@
       updateProgress((typingIndex / text.length) * 100);
 
       // Dispatch the character
-      await dispatchChar(target, char);
+      if (isGoogleDocs) {
+        await dispatchChar(typingTarget, char);
+      } else {
+        await insertChar(typingTarget, char);
+      }
       typingIndex++;
 
       // Wait between characters
@@ -708,7 +768,7 @@
 
       <div class="zt-body">
         <div class="zt-text-input-container">
-          <textarea id="zackTypeInput" placeholder="Enter text to type into Google Docs..."></textarea>
+          <textarea id="zackTypeInput" placeholder="Enter text to type..."></textarea>
           <div class="zt-char-count">0 chars</div>
         </div>
 

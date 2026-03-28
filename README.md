@@ -1,9 +1,10 @@
 # ZackType
 
-A Chrome extension that simulates human-like typing into Google Docs at adjustable speeds up to 300 WPM — with zero errors.
+A Chrome extension that simulates human-like typing on any webpage at adjustable speeds up to 300 WPM — with zero errors.
 
 ## Features
 
+- **Works everywhere** — type into any text field, textarea, or contenteditable element on any webpage, including Google Docs
 - **Zero-error typing** — no error rate control, types your text perfectly
 - **Adjustable speed** — 1 to 300 WPM via a smooth slider
 - **Start / Pause / Resume / Stop** controls
@@ -22,15 +23,16 @@ A Chrome extension that simulates human-like typing into Google Docs at adjustab
 
 ## Usage
 
-1. Open a Google Docs document (`docs.google.com/document/...`).
-2. Click the **ZackType** extension icon in the Chrome toolbar.
-3. A floating panel will appear on the page.
-4. Paste or type your text in the textarea.
-5. Adjust the **Typing Speed** slider (1–300 WPM).
-6. Click **Start** — ZackType will type your text into the document character by character.
-7. Use **Pause/Resume** to pause and continue, or **Stop** to cancel.
+1. Navigate to any webpage with a text field (input, textarea, or contenteditable).
+2. Click inside the text field where you want the text to be typed.
+3. Click the **ZackType** extension icon in the Chrome toolbar.
+4. A floating panel will appear on the page.
+5. Paste or type your text in the textarea.
+6. Adjust the **Typing Speed** slider (1–300 WPM).
+7. Click **Start** — ZackType will type your text into the focused element character by character.
+8. Use **Pause/Resume** to pause and continue, or **Stop** to cancel.
 
-> **Tip:** Click inside the Google Docs document before starting to ensure the cursor is placed where you want the text to be typed.
+> **Tip:** Click inside the target text field *before* clicking Start to ensure ZackType knows where to type. For Google Docs, click inside the document area first.
 
 ## File Structure
 
@@ -38,17 +40,17 @@ A Chrome extension that simulates human-like typing into Google Docs at adjustab
 zacktype/
 ├── manifest.json    # Manifest V3 Chrome extension config
 ├── background.js    # Service worker — handles icon click
-├── content.js       # Floating UI panel + typing engine
-└── popup.html       # Minimal popup for non-Google Docs tabs
+└── content.js       # Floating UI panel + typing engine
 ```
 
 ## Technical Details
 
 - **Manifest V3** Chrome extension
-- Dispatches `keydown` / `keypress` / `keyup` events to the Google Docs iframe's active element (`.docs-texteventtarget-iframe`)
+- Works on **any webpage** — no URL restrictions
+- **Google Docs**: dispatches `keydown` / `keypress` / `keyup` events to the Docs iframe's active element
+- **Other pages**: uses `document.execCommand('insertText')` for inputs, textareas, and contenteditable elements; falls back to direct value manipulation with `input` event dispatch
 - Typing delay formula: `60000 / (5 × WPM)` with ±20% random variation for a natural feel
 - Handles uppercase letters, symbols (shift key simulation), and newlines (Enter key)
-- No external API calls, no host permissions
 
 ## Credits
 
