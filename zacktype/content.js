@@ -816,10 +816,10 @@
               <span>Typing Speed</span>
               <span id="ztSpeedValue" class="zt-value-display">60 WPM</span>
             </label>
-            <input type="range" id="zackTypeSpeed" min="1" max="300" value="60">
+            <input type="range" id="zackTypeSpeed" min="1" max="1000" value="60">
             <div class="zt-slider-labels">
               <span>1 WPM</span>
-              <span>300 WPM</span>
+              <span>1000 WPM</span>
             </div>
           </div>
         </div>
