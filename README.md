@@ -1,12 +1,12 @@
 # ZackType
 
-A Chrome extension that simulates human-like typing on any webpage at adjustable speeds up to 300 WPM — with zero errors.
+A Chrome extension that simulates human-like typing on any webpage at adjustable speeds up to 1000 WPM — with zero errors.
 
 ## Features
 
 - **Works everywhere** — type into any text field, textarea, or contenteditable element on any webpage, including Google Docs
 - **Zero-error typing** — no error rate control, types your text perfectly
-- **Adjustable speed** — 1 to 300 WPM via a smooth slider
+- **Adjustable speed** — 1 to 1000 WPM via a smooth slider
 - **Start / Pause / Resume / Stop** controls
 - **Progress bar** — shows completion percentage in real time
 - **Floating panel** — dark-themed, draggable, minimizable UI
@@ -28,7 +28,7 @@ A Chrome extension that simulates human-like typing on any webpage at adjustable
 3. Click the **ZackType** extension icon in the Chrome toolbar.
 4. A floating panel will appear on the page.
 5. Paste or type your text in the textarea.
-6. Adjust the **Typing Speed** slider (1–300 WPM).
+6. Adjust the **Typing Speed** slider (1–1000 WPM).
 7. Click **Start** — ZackType will type your text into the focused element character by character.
 8. Use **Pause/Resume** to pause and continue, or **Stop** to cancel.
 
