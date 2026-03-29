@@ -133,7 +133,7 @@
     const base = 60000 / (5 * wpm);
     // ±20% random variation for natural feel
     const variation = base * 0.4 * Math.random() - base * 0.2;
-    return Math.max(5, base + variation);
+    return Math.max(1, base + variation);
   }
 
   // ── Dispatch a single character via keyboard events ─────────────────────────
@@ -150,7 +150,6 @@
           cancelable: true,
         })
       );
-      await sleep(30);
       target.dispatchEvent(
         new KeyboardEvent("keypress", {
           key: "Enter",
@@ -161,7 +160,6 @@
           cancelable: true,
         })
       );
-      await sleep(30);
       target.dispatchEvent(
         new KeyboardEvent("keyup", {
           key: "Enter",
@@ -223,7 +221,6 @@
           cancelable: true,
         })
       );
-      await sleep(8);
     }
 
     target.dispatchEvent(
@@ -237,7 +234,6 @@
         cancelable: true,
       })
     );
-    await sleep(10);
     target.dispatchEvent(
       new KeyboardEvent("keypress", {
         key: char,
@@ -249,7 +245,6 @@
         cancelable: true,
       })
     );
-    await sleep(10);
     target.dispatchEvent(
       new KeyboardEvent("keyup", {
         key: char,
@@ -263,7 +258,6 @@
     );
 
     if (shiftNeeded) {
-      await sleep(8);
       target.dispatchEvent(
         new KeyboardEvent("keyup", {
           key: "Shift",
