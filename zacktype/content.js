@@ -55,7 +55,7 @@
     }
   }, true);
 
-  // ── Helpers ────────────────────────────────────────────────────────────────
+  // ── Helpers ────────────────────────────────────────────────────────────
 
   function updateCharCount() {
     const textarea = document.getElementById("zackTypeInput");
@@ -316,8 +316,6 @@
     // Check if we're on Google Docs — if the iframe exists, use it directly
     const iframe = document.querySelector(".docs-texteventtarget-iframe");
     if (iframe && iframe.contentDocument) {
-      // Google Docs uses the iframe's activeElement for keyboard events
-      // Even if it's the body element, that's the correct target for typing
       const iframeActive = iframe.contentDocument.activeElement;
       typingTarget = iframeActive || iframe.contentDocument.body;
       isGoogleDocs = true;
@@ -328,7 +326,6 @@
       if (targetElement && document.contains(targetElement)) {
         typingTarget = targetElement;
       } else {
-        // Fallback: try the currently active element
         const active = document.activeElement;
         if (active) {
           const tag = (active.tagName || "").toLowerCase();
@@ -353,16 +350,44 @@
     while (typingIndex < text.length && isTyping && !isPaused) {
       const char = text[typingIndex];
 
-      // Skip bare \r (Windows line endings)
       if (char === "\r") {
         typingIndex++;
         continue;
       }
 
-      // Update progress
-      updateProgress((typingIndex / text.length) * 100);
+      const delay = getDelay(wpm);
 
-      // Dispatch the character
+      // At high speeds, batch characters for real throughput
+      if (!isGoogleDocs && delay < 15) {
+        let batch = "";
+        for (let i = 0; i < Math.min(Math.ceil(15 / Math.max(delay, 1)), text.length - typingIndex); i++) {
+          const c = text[typingIndex + i];
+          if (c === "\r") continue;
+          if (c === "\n") break;
+          batch += c;
+        }
+        if (batch.length > 0) {
+          typingTarget.focus();
+          const inserted = document.execCommand("insertText", false, batch);
+          if (!inserted) {
+            const tag = (typingTarget.tagName || "").toLowerCase();
+            if (tag === "input" || tag === "textarea") {
+              const start = typingTarget.selectionStart ?? typingTarget.value.length;
+              const end = typingTarget.selectionEnd ?? typingTarget.value.length;
+              typingTarget.value = typingTarget.value.slice(0, start) + batch + typingTarget.value.slice(end);
+              typingTarget.selectionStart = typingTarget.selectionEnd = start + batch.length;
+              typingTarget.dispatchEvent(new Event("input", { bubbles: true }));
+            }
+          }
+          typingIndex += batch.length;
+          updateProgress((typingIndex / text.length) * 100);
+          await sleep(delay);
+          continue;
+        }
+      }
+
+      // Normal single-char path (low speed or Google Docs)
+      updateProgress((typingIndex / text.length) * 100);
       if (isGoogleDocs) {
         await dispatchChar(typingTarget, char);
       } else {
@@ -370,9 +395,7 @@
       }
       typingIndex++;
 
-      // Wait between characters
       if (isTyping && !isPaused && typingIndex < text.length) {
-        const delay = getDelay(wpm);
         await sleep(delay);
       }
     }
@@ -467,11 +490,11 @@
     updateProgress(0);
   }
 
-  // ── SVG icons ───────────────────────────────────────────────────────────────
+  // ── SVG icons ───────────────────────────────────────────────────────────
 
-  const PLAY_ICON = `<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="2 1.7 13 13"><path d="m11.596 8.697-6.363 3.692c-.54.313-1.233-.066-1.233-.697V4.308c0-.63.692-1.01 1.233-.696l6.363 3.692a.802.802 0 0 1 0 1.393"/></svg>`;
+  const PLAY_ICON = `<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="2 1.7 13 13"><path d="m11.596 8.697-6.363 3.692c-.54.313-1.233-.066-1.233-.697V4.308c0-.631.693-1.01 1.233-.696l6.363 3.692a.802.802 0 0 1 0 1.393"/></svg>`;
   const PAUSE_ICON = `<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="2 1.7 13 13"><path d="M5.5 3.5A1.5 1.5 0 0 1 7 5v6a1.5 1.5 0 0 1-3 0V5a1.5 1.5 0 0 1 1.5-1.5m5 0A1.5 1.5 0 0 1 12 5v6a1.5 1.5 0 0 1-3 0V5a1.5 1.5 0 0 1 1.5-1.5"/></svg>`;
-  const STOP_ICON = `<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="2 1.7 13 13"><path d="M3.5 5A1.5 1.5 0 0 1 5 3.5h6A1.5 1.5 0 0 1 12.5 5v6a1.5 1.5 0 0 1-1.5 1.5H5A1.5 1.5 0 0 1 3.5 11zM5 4.5a.5.5 0 0 0-.5.5v6a.5.5 0 0 0 .5.5h6a.5.5 0 0 0 .5-.5V5a.5.5 0 0 0-.5-.5z"/></svg>`;
+  const STOP_ICON = `<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="2 1.7 13 13"><path d="M3.5 5A1.5 1.5 0 0 1 5 3.5h6A1.5 1.5 0 0 1 12.5 5v6a1.5 1.5 0 0 1-1.5 1.5H5A1.5 1.5 0 0 1 3.5 11z"/></svg>`;
 
   // ── Create the floating UI ──────────────────────────────────────────────────
 
@@ -892,7 +915,7 @@
       }
     });
 
-    // ── Dragging ──────────────────────────────────────────────────────────────
+    // ── Dragging ──────────────────────────────────────────────────────────
 
     header.addEventListener("mousedown", (e) => {
       if (e.target === header || header.contains(e.target)) {
@@ -909,7 +932,7 @@
 
     document.addEventListener("mousemove", (e) => {
       if (!state.isDragging) return;
-      e.preventDefault(); // must be synchronous before rAF
+      e.preventDefault();
       requestAnimationFrame(() => {
         state.position.x = e.clientX - state.dragOffset.x;
         state.position.y = e.clientY - state.dragOffset.y;
